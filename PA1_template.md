@@ -13,7 +13,8 @@ email: fernando.garcia@exatec.tec.mx
 ---
 
 ## Loading and preprocessing the data
-```{r setoptions, echo = TRUE, results = "hide", message=FALSE}
+
+```r
 # Importing libraries
 library(data.table)
 library(dplyr)
@@ -21,7 +22,8 @@ library(ggplot2)
 library(chron)
 ```
 
-```{r echo = TRUE}
+
+```r
 # Extracting the cvs file
 if (!file.exists('./activity.csv')){
   unzip("activity.zip", exdir = getwd())
@@ -32,29 +34,42 @@ data    <- dataset[complete.cases(dataset),]
 str(data)
 ```
 
+```
+## Classes 'data.table' and 'data.frame':	15264 obs. of  3 variables:
+##  $ steps   : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ date    : IDate, format: "2012-10-02" "2012-10-02" ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
+##  - attr(*, ".internal.selfref")=<externalptr>
+```
+
 
 ## What is mean total number of steps taken per day?
-```{r echo = TRUE}
+
+```r
 # Calculate the total number of steps taken per day
 daily_steps        <- data %>% group_by(date) %>% summarize(sum = sum(steps), .groups = 'drop')
 daily_mean_steps   <- mean(daily_steps$sum)
 daily_median_steps <- median(daily_steps$sum)
 ```
 
-The mean total number of steps taken per day is `r daily_mean_steps`.  
-The median total number of steps taken per day is `r daily_median_steps`.
+The mean total number of steps taken per day is 1.0766189\times 10^{4}.  
+The median total number of steps taken per day is 10765.
 
 This is a histogram of the total number of steps taken each day:  
 
-```{r echo = TRUE}
+
+```r
 hist(daily_steps$sum, main="Total steps per day", xlab="Steps")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 ## What is the average daily activity pattern?
 
 The following graph shows the pattern of activity averaged per day:
 
-```{r echo = TRUE}
+
+```r
 mean_by_interval <- aggregate(data$steps, by=list(data$interval), FUN = mean)
 p <- ggplot(mean_by_interval , aes(x=Group.1, y=x)) + geom_line() 
 p <- p + xlab("Daily intervals") + ylab("Steps")
@@ -62,22 +77,27 @@ p <- p + labs(title="Average daily activity pattern")
 print(p)
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
-```{r echo = TRUE}
+
+
+```r
 max_interval = mean_by_interval[which.max(mean_by_interval$x),1]
 ```
 
-The 5-minute interval that contains the maximum number of steps (on average across all the days in the dataset) is: `r max_interval`.
+The 5-minute interval that contains the maximum number of steps (on average across all the days in the dataset) is: 835.
 
 ## Imputing missing values
-```{r echo = TRUE}
+
+```r
 # Extracting the missing samples
 missing_data <- dataset[!complete.cases(dataset),]
 ```
 
-In the dataset there are `r dim(missing_data)[1]` values with missing data.
+In the dataset there are 2304 values with missing data.
 
-```{r echo = TRUE}
+
+```r
 # Replacing the NA steps by the daily pattern mean total steps
 for (i in 1:nrow(mean_by_interval)){
   missing_data$steps[missing_data$interval %in% mean_by_interval$Group.1[i]] <- mean_by_interval$x[i]
@@ -88,16 +108,19 @@ filled_data <- rbind(data, missing_data)
 
 # Calculate the total number of steps taken per day
 daily_steps2 <- filled_data %>% group_by(date) %>% summarize(sum = sum(steps), .groups = 'drop')
-``` 
+```
 
-Once filled the dataset the mean and median of total number of steps taken per day are `r mean(daily_steps2$sum)` and `r median(daily_steps2$sum)` respectively.  
+Once filled the dataset the mean and median of total number of steps taken per day are 1.0766189\times 10^{4} and 1.0766189\times 10^{4} respectively.  
 
 This is a histogram of the total number of steps averaged per day (with the filled dataset):  
 
-```{r echo = TRUE}
+
+```r
 # Plotting the histogram
 hist(daily_steps2$sum, main="Total steps per day on the filled dataset", xlab="Steps")
-```   
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
 #### Do the new mean and median values differ from the estimates from the first part of the assignment?
 
@@ -105,8 +128,8 @@ The next table shows the mean and median values for the database before and afte
 
  Database | Mean | Median
 ----------|------|-------
-non filed | `r daily_mean_steps`       |`r daily_median_steps`
-filled    | `r mean(daily_steps2$sum)` | `r median(daily_steps2$sum)`
+non filed | 1.0766189\times 10^{4}       |10765
+filled    | 1.0766189\times 10^{4} | 1.0766189\times 10^{4}
 
 The mean values are equal and the median values are very close.
 
@@ -114,7 +137,8 @@ The mean values are equal and the median values are very close.
 
 Yes, there is. The following graph shows that the activity pattern on the two days are different.
 
-```{r echo = TRUE}
+
+```r
 # Creating the factor weekday
 filled_data$weekday <- factor(!is.weekend(filled_data$date), labels=c("weekend", "weekday"))
 
@@ -126,3 +150,5 @@ p <- p + labs(title="Average daily activity pattern")
 p <- p + scale_colour_discrete(name = "The day is:", labels = c("Weekend", "Weekday"))
 print(p)
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
