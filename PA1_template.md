@@ -83,9 +83,10 @@ print(p)
 
 ```r
 max_interval = mean_by_interval[which.max(mean_by_interval$x),1]
+max_intervav = mean_by_interval[which.max(mean_by_interval$x),2]
 ```
 
-The 5-minute interval that contains the maximum number of steps (on average across all the days in the dataset) is: 835.
+The 5-minute interval that contains the maximum number of steps (on average across all the days in the dataset) is 835 with 206.1698113 steps.
 
 ## Imputing missing values
 
