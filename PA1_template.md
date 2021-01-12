@@ -95,7 +95,7 @@ The 5-minute interval that contains the maximum number of steps (on average acro
 missing_data <- dataset[!complete.cases(dataset),]
 ```
 
-In the dataset there are 2304 values with missing data.
+In the dataset there are 2304 values with missing data. The missing values will be replaced by the respective number of steps correspond to the mean total pattern previously calculated.
 
 
 ```r

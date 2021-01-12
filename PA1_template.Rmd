@@ -76,7 +76,7 @@ The 5-minute interval that contains the maximum number of steps (on average acro
 missing_data <- dataset[!complete.cases(dataset),]
 ```
 
-In the dataset there are `r dim(missing_data)[1]` values with missing data.
+In the dataset there are `r dim(missing_data)[1]` values with missing data. The missing values will be replaced by the respective number of steps correspond to the mean total pattern previously calculated.
 
 ```{r echo = TRUE}
 # Replacing the NA steps by the daily pattern mean total steps
